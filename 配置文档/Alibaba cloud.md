@@ -1,0 +1,23 @@
+# Alibaba cloud
+
+```xml
+账号：fangrunbo0606@gmail.com
+密码：Fangrunbo0606!
+
+ip地址：
+		47.252.46.159（公）
+		172.21.165.44（私有）
+		用户名:root
+		密码:Fangrunbo0606！
+
+```
+
+# 宝塔
+
+```xml
+外网面板地址: https://47.252.46.159:32160/e55159fb
+内网面板地址: https://172.21.165.44:32160/e55159fb
+username: vkb0cgln
+password: bb0d7751
+```
+
