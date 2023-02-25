@@ -1,6 +1,6 @@
 # Alibaba cloud
 
-```xml
+```bash
 账号：fangrunbo0606@gmail.com
 密码：Fangrunbo0606!
 
@@ -14,10 +14,10 @@ ip地址：
 
 # 宝塔
 
-```xml
+```bash
 外网面板地址: https://47.252.46.159:32160/e55159fb
 内网面板地址: https://172.21.165.44:32160/e55159fb
-username: vkb0cgln
-password: bb0d7751
+username: peter
+password: 980606rf
 ```
 

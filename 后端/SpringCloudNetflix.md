@@ -63,7 +63,9 @@ public class DeptConsumerController {
 }
 ```
 
- ## 2. Eureka
+ ## 2. Eureka   
+
+Springboot 和 SpringCloud版本一定要对着，我是没找到哪个适配2.7.5的Springboot所以并没有进行后面的实际操作
 
 服务注册中心组件
 
@@ -71,7 +73,7 @@ public class DeptConsumerController {
 
 ### 2.1 EurekaServer单例
 
-导入依赖
+导入依赖（7001端口）
 
 ```xml
 <dependency>
@@ -80,7 +82,7 @@ public class DeptConsumerController {
 </dependency>
 ```
 
-配置Eureka
+配置Eureka（7001端口）
 
 ```yaml
 server:
@@ -95,24 +97,24 @@ eureka:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
 ```
 
-在启动类上添加注解
+在启动类上添加注解（7001端口）
 
 ```java
 @EnableEurekaServer
 ```
 
-**服务提供者**
+**服务提供者**  （8001 端口）
 
 导入依赖，对于EurekaServer来说服务提供这也是客户端
 
 ```xml
 <dependency>
     <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId> #这是最新的
 </dependency>
 ```
 
-配置Eureka
+配置Eureka（8001 端口）
 
 ```yaml
 eureka:
@@ -124,13 +126,13 @@ eureka:
     # instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}:@project.version@
 ```
 
-在启动类上添加注解
+在启动类上添加注解（8001端口）
 
 ```java
 @EnableEurekaClient
 ```
 
-服务提供者监控信息
+服务提供者监控信息（8001端口的pom文件内）
 
 ```xml
 <dependency>
@@ -164,7 +166,7 @@ eureka:
 </build>
 ```
 
-配置信息
+配置信息（8001端口）
 
 ```yaml
 management:
@@ -182,7 +184,7 @@ info:
   build.version: $project.version$
 ```
 
-服务发现
+服务发现（8001端口的controller内）
 
 ```java
 @GetMapping("/discovery")
@@ -202,9 +204,15 @@ public Object discovery(){
 }
 ```
 
-**服务调用者**
+启动类添加注解
 
-导入依赖，对于EurekaServer来说服务提供这也是客户端
+```java
+@EnableDiscoveryClient  //其实和@EnableEurekaClient的作用是一样的
+```
+
+**服务调用者**（80端口）
+
+导入依赖，对于EurekaServer来说服务提供者也是客户端
 
 ```xml
 <dependency>
@@ -213,7 +221,7 @@ public Object discovery(){
 </dependency>
 ```
 
-配置Eureka
+配置Eureka（80端口）
 
 ```yaml
 eureka:
@@ -222,16 +230,16 @@ eureka:
     service-url: # 监控页面地址
       defaultZone: http://127.0.0.1:7001/eureka/ # EurekaServer地址
   instance:
-    instance-id: springcloud-provider-dept-8001
+    instance-id: springcloud-provider-dept-80
 ```
 
-在启动类上添加注解
+在启动类上添加注解（80端口）
 
 ```java
 @EnableEurekaClient
 ```
 
-服务调用
+服务调用（80端口）
 
 ```java
 @Autowired
@@ -255,6 +263,8 @@ public List<Dept> getDept() {
     return restTemplate.getForObject("http://" + ip + ":" + port + "/dept/list", List.class);
 }
 ```
+
+
 
 ### 2.2 EurekaServer集群
 
@@ -329,6 +339,7 @@ eureka:
 ```
 
 ```yaml
+80端口
 eureka:
   client:
   	register-with-eureka: false
@@ -340,11 +351,13 @@ eureka:
 
 ## 3. LoadBalancer
 
+### 3.1配置
+
 负载均衡组件，微服务名字调用
 
 3.0.0+版本的Eureka自带LoadBalancer
 
-给Rest的配置添加注解`@LoadBalanced`
+给Rest的配置添加注解`@LoadBalanced`（80端口，也就是客户端）
 
 ```java
 @Configuration
@@ -365,6 +378,7 @@ public class DeptConsumerController {
     @Autowired
     RestTemplate restTemplate;
 
+    //改这里
     private static final String REST_URL_PREFIX = "http://SPRINGCLOUD-PROVIDER-DEPT";
 
     @RequestMapping("/consumer/dept/add")
@@ -464,7 +478,7 @@ eureka:
 
 使用服务调用者调用接口会发现默认使用轮询
 
-自定义负载均衡策略
+### 3.2**自定义负载均衡策略**
 
 LoadBalancer默认轮询，还有一个随机策略
 
@@ -595,7 +609,7 @@ public ReactorServiceInstanceLoadBalancer reactorServiceInstanceLoadBalancer(Env
 </dependency>
 ```
 
-Feign接口编写
+Feign接口编写（再api里添加service再创建deptClientService interface）
 
 ```java
 @Service
@@ -618,13 +632,13 @@ public interface DeptClient {
 @EnableFeignClients
 ```
 
-服务调用者
+服务调用者 controller里修改
 
 ```java
 @RestController
 public class DeptConsumerController {
     @Autowired
-    DeptClient deptClient;
+    DeptClient deptClient; //上面写的接口
 
     @RequestMapping("/consumer/dept/add")
     public boolean addDept(Dept dept) {
@@ -718,6 +732,8 @@ public class DeptController {
 
 在公用实体类包或者服务调用者下service添加回调实现类或回调工厂类，仅重写一个方法演示
 
+FallbackFactory是回调一个类的，Fallback是回调一个方法的
+
 ```java
 @Service
 public class DeptClientServiceFallback implements DeptClientService {
@@ -729,7 +745,10 @@ public class DeptClientServiceFallback implements DeptClientService {
 
     @Override
     public Dept getDept(Long id) {
-        return new Dept().setDeptno(id).setDname("降级").setDbSource("no db");
+        return new Dept()
+            	.setDeptno(id)
+            	.setDname("降级")
+            	.setDbSource("no db");
     }
 
     @Override
@@ -751,7 +770,10 @@ public class DeptClientServiceFallbackFactory implements FallbackFactory<DeptCli
 
             @Override
             public Dept getDept(Long id) {
-                return new Dept().setDeptno(id).setDname("降级").setDbSource("no db");
+                return new Dept()
+                    	.setDeptno(id)
+                    	.setDname("降级")
+                    	.setDbSource("no db");
             }
 
             @Override
@@ -1012,7 +1034,7 @@ public class BlackListFilter  implements GlobalFilter, Ordered {
 </dependency>
 ```
 
-配置
+配置, 这块没弄，如果需要改成自己的
 
 ```yaml
 server:
@@ -1024,9 +1046,9 @@ spring:
     config:
       server:
         git:
-          uri: https://gitee.com/ytc214800722/springcloud-config.git
-          username: 214800722@qq.com
-          password: Ytc19980211..
+          uri: https://github.com/RF0606/springcloud-config.git
+          username: xxxxxx
+          password: xxxxxx
 ```
 
 在启动类上添加注解

@@ -43,6 +43,13 @@ auth 12345678
 
 或者宝塔无脑安装
 
+```bash
+宝塔直接安装的话，在性能调整里设置密码
+之后重启redis
+在linux内输入 redis-cli 启动redis
+之后输入 auth password进入
+```
+
 ## 2. 性能测试
 
 ```bash
@@ -68,6 +75,8 @@ redis-benchmark [option] [option value]
 
 ## 3. 基本命令
 
+Redis数据结构有：string、list、hash、set、sorted set这五大基本类型
+
 ```bash
 # 默认有16个数据库
 # 0-15
@@ -91,7 +100,7 @@ exists key1
 move key1 0
 # 删除某个key
 del key1
-# 设置过期时间x秒
+# 设置过期时间x秒，过期后 key1中的值就没了
 expire key1 10
 # 查看剩余时间
 ttl key1
@@ -103,22 +112,24 @@ type key1
 
 ```bash
 # 如果不存在创建，如果存在在后面追加字符串
-append key1 aaa
+append key1 "aaa"
 # 获取字符串长度
 strlen key1
 # key++如果是整数
 incr key1
 # key--如果是整数
 decr key1
-# key自增步长
+# key自增步长， 直接加到 xx
 incrby key1 10
-# key自增步长
+# key自减步长
 decrby key1 10
 # 截取字符串 包头包尾 -1代表最后一个 -2代表倒数第二个
 getrange key1 0 3
+# 把字符串指定位置及之后的替换
+setrange ley1 1 xx
 # 设置value并设置过期时间
 setex key1 30 aaa
-# 当key不存在时设置值
+# 当key不存在时设置值，如果key存在则创建失败
 setnx key1 aaa
 # 批量set
 mset key1 v1 key2 v2
@@ -159,7 +170,7 @@ rpoplpush list1 list2
 # 在list中指定索引更新元素，这个列表必须存在，这个索引必须存在元素
 lset list1 0 a
 # 向list中指定元素的前面或者后面添加元素，指定元素从头到尾的顺序
-linsert list1 before|after newValue oldValue
+linsert list1 before|after oldValue newValue
 # 向list从头添加元素，如果list存在的话
 lpushx list1 a
 # 向list从尾添加元素，如果list存在的话
@@ -167,6 +178,8 @@ rpushx list1 a
 ```
 
 ## 6. Set
+
+set是无序的，跟list有差别
 
 ```bash
 # 向set中添加一个或多个元素
@@ -180,14 +193,14 @@ scard set1
 # 删除set中的指定的一个或者多个元素
 srem set1 a [b]
 # 随机返回set中的一个或者n个元素
-srandmember set1 [n]
+srandmember set1 n
 # 在set中随机移除并返回一个元素
 spop set1
 # 移动set中的指定元素到另一个set
 smove set1 set2 a
 # 查看多个set之间的差集
 sdiff set1 set2 set3
-# 查看多个set之间的交集
+# 查看多个set之间的交集 
 sinter set1 set2 set3
 # 查看多个set之间的并集
 sunion set1 set2 set3
@@ -226,7 +239,7 @@ hvals hash1
 hincrby hash1 key1 3
 # 在hash中如果不存在指定key可以设置
 hsetnx hash1 key1 aa
-# 对象 的储存方式
+# 对象 的储存方式 名字为user:1
 hset user:1 name aa age 13
 ```
 
@@ -235,13 +248,13 @@ hset user:1 name aa age 13
 ```bash
 # 向zset指定大小添加一个或者多个元素
 zadd zset1 1 a [2 b]
-# 在zset中获取索引范围的元素[携带大小]
+# 在zset中获取索引范围的从小到大的元素[携带大小] 0 -1属于获取所有值
 zrange zset1 0 -1 [withscores]
-# 在zset中获取索引范围的元素[携带大小] 反过来
+# 在zset中获取索引范围的从大到小的元素[携带大小]
 zrevrange zset1 0 -1 [withscores]
 # 在zset中获取大小指定范围内从小到大的元素[携带大小] [个数]
 zrangebyscore zset1 -inf +inf [withscores] [n]
-# 在zset中获取大小指定范围内从大到小的元素[携带大小] [个数]
+# 在zset中获取大小指定范围内从大到小的元素[携带大小] [个数] 
 zrevrangebyscore zset1 +inf -inf [withscores] [n]
 # 返回zset中元素个数
 zcard zset1
@@ -362,8 +375,8 @@ unwatch
 开启连接
 
 ```java
-Jedis jedis = new Jedis("47.100.36.90", 6379);
-jedis.auth("Ytc19980211..");
+Jedis jedis = new Jedis("47.252.46.159", 6379);
+jedis.auth("123456"); //数据库密码
 System.out.println(jedis.ping());
 ```
 
@@ -414,9 +427,9 @@ Springboot中与redis的整合在2.0后从Jedis替换为Lettuce
 ```yaml
 spring:
   redis:
-    host: 47.100.36.90
+    host: 47.252.46.159
     port: 6379
-    password: Ytc19980211..
+    password: 123456
 ```
 
 使用，再往后点就能操作了
@@ -440,7 +453,7 @@ void contextLoads() {
 
 不需要手动关闭连接
 
-set对象需要实现序列化Serializable接口
+set对象需要实现序列化Serializable接口，所有对象需要先序列化才能传递
 
 set对象可以通过转为json，也可以直接传递对象
 
@@ -458,8 +471,10 @@ public class RedisConfig {
         template.setConnectionFactory(redisConnectionFactory);
         //Json序列化配置
         Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+        
         ObjectMapper om = new ObjectMapper();
         om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        
         jackson2JsonRedisSerializer.setObjectMapper(om);
         //String序列化配置
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
@@ -2108,7 +2123,7 @@ redis-server tuYoooConfig/redis81.conf
 4.config rewrite 可以将config set持久化到Redis配置文件中
 ```
 
-命令:
+命令（从机）:
 
 ```bash
 redis-cli -p 6380 #登录从机客户端

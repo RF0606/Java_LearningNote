@@ -2,7 +2,7 @@
 
 linux:常用命令
 
-```
+```bash
 cd 改变目录
 cd .. 回到上一个目录，直接cd进入默认目录
 pwd 显示当前所在目录路径
@@ -42,7 +42,7 @@ exit 退出
 
 .gitignore 文件可以控制哪些文件不被git到仓库
 
-```
+```bash
 *.txt 代表所有txt结尾文件
 ！lib.txt lib.txt文件除外
 /temp 仅忽略根目录下的todo文件，但不包括其他目录temp （往上忽略）
@@ -69,7 +69,7 @@ doc/*.txt 会忽略doc/notes.txt 但不包括doc/server/arch.txt
 
 branch命令：
 
-```
+```bash
 git branch [branch-name] 创建一个分支
 git checkout [branch-name] 切换分支
 git checkout -b [branch-name] 创建并切换分支

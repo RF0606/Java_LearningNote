@@ -367,7 +367,9 @@ centos                latest    5d0da3dc9764   6 weeks ago     231MB
 portainer/portainer   latest    580c0e4e98b0   7 months ago    79.1MB
 ```
 
-## 5. 容器数据卷
+## 5. 容器数据卷  volume
+
+挂载叫做 bind mount
 
 ```bash
 # 方式一:直接使用命令来挂载 -v
@@ -429,7 +431,7 @@ ADD # 加入文件 redis nginx tomcat
 WORKDIR # 镜像的工作目录
 VOLUME # 挂载目录
 EXPOSE # 指定暴露端口
-CMD # 指定这个容器启动的时候 要运行的命令 只要最好一个会生效 可被替代
+CMD # 指定这个容器启动的时候 要运行的命令 只有最后一个会生效 可被替代
 ENTRYPOINT #  指定这个容器启动的时候 要运行的命令 可以追加命令
 ONBUILD # 当构建一个被继承dockerFile 这个时候就会运行ONBUILD的指令 触发指令
 COPY # 类似 ADD 将文件拷贝到镜像中
@@ -438,7 +440,7 @@ ENV # 构建的适合设置环境变量
 
 ```bash
 FROM centos
-MAINTAINER ytc<214800722@qq.com>
+MAINTAINER peter<fangrunbo0606@gmail.com>
 
 ENV MYPATH /usr/local
 WORKDIR $MYPATH
@@ -451,7 +453,7 @@ EXPOSE 18080
 CMD /bin/bash
 ----------------------
 # 通过这个文件构建镜像 -f 通过什么文件构建 -t 名称:版本  注意后面有个 .
-docker build -f Dockerile -t mycentos:1.0 . 
+docker build -f mydockerile-centos -t mycentos:1.0 . 
 ```
 
 发布
@@ -519,7 +521,7 @@ container: 容器网络连通
 # docker默认启动时会带上--net bridge
 
 # 自定义网络
-docker networdk create --subnet 192.168.0.0/16 --gateway 192.168.0.1 mynet
+docker network create --subnet 192.168.0.0/16 --gateway 192.168.0.1 mynet
 
 # 启动
 docker run -d -P --name tomcat01 --net mynet tomcat
