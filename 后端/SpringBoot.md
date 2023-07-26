@@ -494,9 +494,11 @@ public interface UserMapper {
 }
 ```
 
+或者在主启动项上``MapperScan("com.peter.mapper")``，会扫描mapper包下面所有的接口
+
 在resources下创建mybatis/mapper/的mapper.xml
 
-在service层的方法上添加@Transactional开启事务
+在service层的方法上添加@Transactional开启事务，准确来说是service层的实现类上
 
 手动回滚(try/catch)
 
