@@ -248,7 +248,7 @@ client-side  Encryption: 用户上传之前自己加密
 
 ### 5.5.2 snowball Edge Compute Optimized:
 
-42TB of HDD or 28YB NVMe capacity（机械或NVMe固态）
+42TB of HDD or 28TB NVMe capacity（机械或NVMe固态）
 
 ### 5.5.3 snowcone：
 
@@ -364,7 +364,7 @@ MongoDB的aws实现，No-SQL db
 
 写进的数据没法被删除更改
 
-## 6.14 Amazon Mnaged Blockchain:
+## 6.14 Amazon Managed Blockchain:
 
 可以加入公共区块链网络，或者创建自己的可拓展私有区块链网络
 
@@ -562,6 +562,10 @@ ML-powered service，做两件事，automated code reviews and application perfo
 
 service history and my account, 展示health情况的
 
+**Service Health Dashboard 显示AWS 服务的一般状态，**
+
+**而Personal Health Dashboard 提供关于特定AWS 环境的主动、透明通知**
+
 # 11. VPC& Networking
 
 ## 11.1 IP Address
@@ -602,7 +606,7 @@ VPC Endpoint Interface是连接所有服务的除了S3 和Dynamo DB
 
 ## 11.5  VPC PrivateLink
 
-来自于VPC Endpoints。允许将自己VPC中运行的服务直接且私密的连接到其他VPC，而不需要VPC对等或者
+来自于VPC Endpoints。允许将自己VPC中运行的服务直接且私密的连接到其他VPC，而不需要VPC对等
 
 ## 11.6 Direct Connect & Site-to-Site VPN
 
@@ -654,7 +658,7 @@ HSM是AWS提供加密硬件，我们自己管理密钥
 
 AWS的CMK是给aws服务用的，自己的CMK是我们自己用的，Customer Master Key
 
-## 12.5 AWS Certificate Mnager ACM
+## 12.5 AWS Certificate Manager ACM
 
 配置管理部署SSL / TLS 证书的，连负载均衡，CloudFront和API Gateway的
 
@@ -1070,7 +1074,7 @@ Design principle:
 2. Enable traceability
 3. Apply security at all layers
 4. auto security best practice
-5. protect date in transit and at rest
+5. protect data in transit and at rest
 6. keep people away from data
 7. prepare for security events
 
@@ -1154,7 +1158,7 @@ Design principle:
 Subtainability AWS services :
 
 1. EC2 Auto scaling, serverless offering
-2. Cost Explorer, AWS Gravition 2, EC2 T instances, @Spot Instances
+2. Cost Explorer, AWS Gravition 2, EC2 T instances, Spot Instances
 3. EFS-IA, Amazon S3, Glacier, EBS Cold HDD Volumes
 4. S3 Lifecycle Configurations, S3 Intelligent Tiering
 5. Amazon Data Lifecycle Manager
