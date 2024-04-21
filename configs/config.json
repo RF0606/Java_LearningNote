@@ -2,9 +2,9 @@
   "picBed": {
     "current": "aliyun",
     "aliyun": {
-      "accessKeyId": "LTAI5tBsXHQysUeUgd7PF3Xa",
-      "accessKeySecret": "ZX9kroScDawhRenydgp05X1ZtC1iFl",
-      "bucket": "ytc-picgo",
+      "accessKeyId": "",
+      "accessKeySecret": "",
+      "bucket": "",
       "area": "oss-cn-shanghai",
       "path": "",
       "customUrl": "",
